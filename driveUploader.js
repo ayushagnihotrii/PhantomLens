@@ -1,36 +1,46 @@
 /**
  * driveUploader.js
- * ----------------
- * Helper: uploads a file buffer to Google Drive using a service account.
+ * ────────────────
+ * Uploads files to Google Drive using OAuth 2.0 (personal account).
+ *
+ * Flow:
+ *   1. Run `node auth.js` once → logs in via browser → saves refresh token
+ *   2. This module uses the refresh token to get access tokens automatically
  */
 
 const { google } = require("googleapis");
 const { Readable } = require("stream");
-const path = require("path");
-const fs = require("fs");
 
 let driveClient = null;
 
 /**
- * Initialise the Drive client once (lazy singleton).
+ * Build an OAuth2 client from env vars.
+ */
+function getOAuth2Client() {
+  const clientId     = process.env.GOOGLE_CLIENT_ID;
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+  const redirectUri  = process.env.GOOGLE_REDIRECT_URI || "http://localhost:3000/oauth/callback";
+
+  if (!clientId || !clientSecret) {
+    throw new Error("Missing GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET in .env");
+  }
+
+  const oauth2 = new google.auth.OAuth2(clientId, clientSecret, redirectUri);
+
+  const refreshToken = process.env.GOOGLE_REFRESH_TOKEN;
+  if (refreshToken) {
+    oauth2.setCredentials({ refresh_token: refreshToken });
+  }
+
+  return oauth2;
+}
+
+/**
+ * Get an authenticated Drive client (lazy singleton).
  */
 function getDriveClient() {
   if (driveClient) return driveClient;
-
-  const keyPath = path.resolve(process.env.GOOGLE_SERVICE_ACCOUNT_KEY || "./credentials.json");
-
-  if (!fs.existsSync(keyPath)) {
-    throw new Error(
-      `Google service-account key not found at "${keyPath}".\n` +
-        "Download one from the GCP console and place it at the path set in .env"
-    );
-  }
-
-  const auth = new google.auth.GoogleAuth({
-    keyFile: keyPath,
-    scopes: ["https://www.googleapis.com/auth/drive.file"],
-  });
-
+  const auth = getOAuth2Client();
   driveClient = google.drive({ version: "v3", auth });
   return driveClient;
 }
@@ -69,4 +79,4 @@ async function uploadToDrive(buffer, fileName, mimeType) {
   };
 }
 
-module.exports = { uploadToDrive };
+module.exports = { uploadToDrive, getOAuth2Client };
