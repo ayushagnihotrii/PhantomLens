@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: phantom-lens
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: STORAGE_MODE
+        value: local
+      - key: PORT
+        value: 3000
+      - key: NODE_ENV
+        value: production

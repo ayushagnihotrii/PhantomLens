@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📸 Camera Consent Demo</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ════════════════════════════════════════════════════
+       STEP 1 – CONSENT SCREEN
+       ════════════════════════════════════════════════════ -->
+  <section id="consent-screen" class="screen active">
+    <div class="card">
+      <div class="icon">🔒</div>
+      <h1>Camera Consent Demo</h1>
+      <p class="subtitle">University Cybersecurity Awareness Project</p>
+
+      <div class="consent-box">
+        <h2>What this page does</h2>
+        <ul>
+          <li>📷 Requests access to your <strong>front</strong> and <strong>rear</strong> cameras.</li>
+          <li>🖼️ Captures <strong>one photo from each camera</strong> (you control the shutter).</li>
+          <li>☁️ Uploads the photos to a secure backend server.</li>
+          <li>📝 Records basic device info (browser, OS) and a timestamp.</li>
+        </ul>
+
+        <h2>Why?</h2>
+        <p>
+          This is a <strong>controlled university demonstration</strong> showing how web
+          applications can access device hardware after consent. No data is shared
+          with third parties.
+        </p>
+
+        <h2>Your rights</h2>
+        <ul>
+          <li>You may <strong>deny</strong> camera permission at any time.</li>
+          <li>You may <strong>close this page</strong> to cancel.</li>
+          <li>Photos can be deleted upon request.</li>
+        </ul>
+      </div>
+
+      <label class="checkbox-label">
+        <input type="checkbox" id="consent-check" />
+        I understand and give my consent to proceed.
+      </label>
+
+      <button id="consent-btn" class="btn primary" disabled>
+        Continue &rarr;
+      </button>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════
+       STEP 2 – CAMERA CAPTURE
+       ════════════════════════════════════════════════════ -->
+  <section id="capture-screen" class="screen">
+    <div class="card wide">
+      <h1>📸 Capture Photos</h1>
+
+      <div class="camera-container">
+        <video id="video" autoplay playsinline></video>
+        <canvas id="canvas" style="display:none"></canvas>
+      </div>
+
+      <div class="camera-controls">
+        <p id="camera-label" class="cam-label">Front Camera</p>
+
+        <button id="capture-btn" class="btn primary">
+          🔘 Take Photo
+        </button>
+      </div>
+
+      <!-- Thumbnails of captured photos -->
+      <div class="previews">
+        <div class="preview-slot" id="front-preview">
+          <span class="label">Front</span>
+          <img id="front-img" alt="Front camera" />
+          <span class="badge" id="front-badge">⏳</span>
+        </div>
+        <div class="preview-slot" id="rear-preview">
+          <span class="label">Rear</span>
+          <img id="rear-img" alt="Rear camera" />
+          <span class="badge" id="rear-badge">⏳</span>
+        </div>
+      </div>
+
+      <button id="upload-btn" class="btn success" disabled>
+        ☁️ Upload Photos
+      </button>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════
+       STEP 3 – DONE
+       ════════════════════════════════════════════════════ -->
+  <section id="done-screen" class="screen">
+    <div class="card">
+      <div class="icon">✅</div>
+      <h1>Upload Complete!</h1>
+      <p id="done-msg">Your photos have been saved successfully.</p>
+      <div id="done-details" class="details-box"></div>
+      <button id="restart-btn" class="btn secondary">Start Over</button>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════
+       ERROR OVERLAY
+       ════════════════════════════════════════════════════ -->
+  <div id="error-toast" class="toast hidden"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
